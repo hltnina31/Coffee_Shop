@@ -1,8 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { randomUUID } from "node:crypto";
-import { cafeTimezone } from "../shared/reservation.ts";
-import type { ReservationRequest } from "../shared/reservation.ts";
-import type { ReservationStore, StoredReservation } from "./reservations.ts";
+import { cafeTimezone } from "../shared/reservation.js";
+import type { ReservationRequest } from "../shared/reservation.js";
+import type { ReservationStore, StoredReservation } from "./reservations.js";
 
 interface DatabaseRow {
 	reference: string;

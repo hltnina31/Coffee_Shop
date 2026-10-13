@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { timingSafeEqual } from "node:crypto";
-import { deleteExpiredRequests } from "../server/database.ts";
+import { deleteExpiredRequests } from "../server/database.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	res.setHeader("Cache-Control", "no-store");

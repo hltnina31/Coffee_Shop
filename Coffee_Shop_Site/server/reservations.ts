@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { cafeTimezone, normalizeValues, validateReservation } from "../shared/reservation.ts";
-import type { ReservationRequest, SavedReservation } from "../shared/reservation.ts";
+import { cafeTimezone, normalizeValues, validateReservation } from "../shared/reservation.js";
+import type { ReservationRequest, SavedReservation } from "../shared/reservation.js";
 
 export interface StoredReservation {
 	payloadHash: string;

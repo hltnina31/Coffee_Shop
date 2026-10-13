@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { createReservationStore } from "../server/database.ts";
-import { handleReservationRequest } from "../server/reservations.ts";
+import { createReservationStore } from "../server/database.js";
+import { handleReservationRequest } from "../server/reservations.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	res.setHeader("Cache-Control", "no-store");
