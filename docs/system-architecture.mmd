@@ -1,0 +1,58 @@
+flowchart TD
+    subgraph browser["Visitor's browser"]
+        form["React reservation form<br/>Name, email, guests, date and time"]
+        clientValidation["Browser validation<br/>Europe/Oslo dates and opening hours"]
+        submission["Submission service<br/>Loading state and duplicate-click guard<br/>Retry key retained in session storage"]
+        confirmation["Saved request summary<br/>Reference, date, time and guests<br/>Pending portfolio request only<br/>No real booking and no email sent"]
+        error["Accessible error message<br/>Keep entered values<br/>Retry unchanged details with the same key"]
+        form --> clientValidation
+        clientValidation -->|Valid| submission
+        clientValidation -->|Invalid| error
+        error -->|Correct fields or retry| form
+    end
+
+    subgraph vercel["Vercel - server side"]
+        firewall["Firewall rate limit<br/>POST /api/reservations<br/>5 requests per IP per 60 seconds"]
+        api["Vercel Function<br/>POST /api/reservations"]
+        guards["Request checks<br/>Enabled flag, origin, JSON size and honeypot"]
+        retryCheck["Check existing submission key<br/>Compare payload HMAC and retry window"]
+        serverValidation["Validate new requests<br/>Name, email, guests, date and time<br/>Europe/Oslo and submission window"]
+        databaseAccess["Database service<br/>Parameterized SQL<br/>Restricted application role"]
+        cron["Vercel Cron<br/>Daily schedule: 03:00 UTC<br/>Execution time may vary"]
+        cleanup["GET /api/cleanup<br/>Authorize using server-only CRON_SECRET"]
+        secrets["Server-only environment variables<br/>Database credentials and secrets<br/>Never exposed through VITE_ variables"]
+    end
+
+    subgraph neon["Neon PostgreSQL - reservation-live"]
+        database[("Private reservation_requests table<br/>Reference, name, email and guest count<br/>Requested date, time and timezone-derived instant<br/>Creation timestamp and pending status<br/>Unique submission key and database constraints")]
+    end
+
+    submission -->|HTTPS POST with submission key| firewall
+    firewall -->|Allowed| api
+    firewall -->|429 - too many requests| error
+    api --> guards
+    guards -->|Accepted| retryCheck
+    guards -->|Rejected| error
+    retryCheck -->|Parameterized lookup| databaseAccess
+    databaseAccess -->|Lookup or insert| database
+    database -->|Existing record, save result or failure| databaseAccess
+    databaseAccess -->|Lookup result| retryCheck
+    retryCheck -->|Matching saved request - HTTP 200| confirmation
+    retryCheck -->|No saved request| serverValidation
+    retryCheck -->|Conflict or expired retry| error
+    serverValidation -->|Valid new request| databaseAccess
+    serverValidation -->|Invalid - HTTP 422| error
+    databaseAccess -->|Save confirmed - HTTP 201| confirmation
+    databaseAccess -->|Failure or uncertain save - HTTP 503| error
+
+    cron -->|Bearer authorization| cleanup
+    cleanup -->|Parameterized DELETE: older than 30 days| database
+    secrets -.-> api
+    secrets -.-> databaseAccess
+    secrets -.-> cleanup
+
+    %% No public endpoint lists reservations or retrieves visitor contact details.
+    %% The app role cannot SELECT name/email or UPDATE records; DELETE supports cleanup.
+    %% Concurrent inserts use a unique key and ON CONFLICT to return the saved request.
+    %% The confirmation is shown only after a verified saved response.
+    %% Local development and integration tests use reservation-test, never reservation-live.
