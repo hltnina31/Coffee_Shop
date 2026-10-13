@@ -1,0 +1,51 @@
+{
+  "name": "coffee-shop-site",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "dev:fullstack": "vite --mode fullstack",
+    "typecheck": "tsc -b",
+    "test": "tsx --test tests/reservation.test.ts tests/reservations.test.ts",
+    "test:integration": "node --env-file=.env.test.local --import tsx --test tests/database.integration.test.ts"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-icons": "^5.7.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vercel/node": "^21.0.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "autoprefixer": "^10.6.1",
+    "eslint": "^10.10.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.6",
+    "globals": "^17.12.0",
+    "postcss": "^8.5.29",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.69.0",
+    "vercel": "^62.5.0",
+    "vite": "^8.3.0"
+  },
+  "overrides": {
+    "@vercel/container": {
+      "tar": "7.5.22"
+    }
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

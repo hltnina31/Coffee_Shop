@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev -- --port $PORT",
+  "outputDirectory": "dist",
+  "regions": ["fra1"],
+  "functions": {
+    "api/*.ts": { "maxDuration": 30 }
+  },
+  "crons": [{ "path": "/api/cleanup", "schedule": "0 3 * * *" }]
+}

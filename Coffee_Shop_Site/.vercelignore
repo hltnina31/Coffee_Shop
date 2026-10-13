@@ -1,0 +1,20 @@
+# Local secrets must never be uploaded.
+.env
+.env.*
+**/.env
+**/.env.*
+*.local
+**/*.local
+
+# Local tooling, dependencies, and generated output.
+.git/
+.vercel/
+.vscode/
+node_modules/
+dist/
+coverage/
+*.log
+.DS_Store
+
+# The template contains no secret values.
+!.env.example
